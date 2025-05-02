@@ -44,10 +44,10 @@ anak(riki, sekar).    % Riki adalah anak dari Sekar
 anak(cahyo, dita).    % Cahyo adalah anak dari Dita
 anak(cahyo, budi).    % Cahyo adalah anak dari Budi
 
-anak(lisa, Sari).      % lisa adalah anak dari Sari
-anak(lisa, Yanto).     % lisa adalah anak dari Yanto
-anak(dendi, Sari).      % Dendi adalah anak dari Sari
-anak(dendi, Yanto).     % Dendi adalah anak dari Yanto
+anak(lisa, sari).      % lisa adalah anak dari Sari
+anak(lisa, yanto).     % lisa adalah anak dari Yanto
+anak(dendi, sari).      % Dendi adalah anak dari Sari
+anak(dendi, yanto).     % Dendi adalah anak dari Yanto
 
 % Generasi 4 (Cicit Andi dan Tina)
 anak(puspa, ruslan). % Puspa adalah anak dari Ruslan
@@ -71,12 +71,12 @@ anak(bella, dendi).  % Bella adalah anak dari Dendi
 anak(bella, cantika).% Bella adalah anak dari Cantika
 
 %Rules
-perempuan(X) :- \+ laki(X).
 
 %relasi orangtua
 orangTua(X, Y) :- anak(Y, X).
 ayah(X, Y) :- orangTua(X, Y), laki(X).
 ibu(X, Y) :- orangTua(X, Y), perempuan(X).
+
 istri(X, Y) :- ibu(X, Z), ayah(Y, Z).
 suami(X, Y) :- ayah(X, Z), ibu(Y, Z). 
 
@@ -89,19 +89,37 @@ saudaraPerempuan(X, Y) :- saudara(X, Y), perempuan(X).
 paman(X, Y) :- orangTua(X, Z), saudaraLaki(Z, Y).
 bibi(X, Y) :- orangTua(X, Z), saudaraPerempuan(Z, Y).
 ponakan(X, Y) :- orangTua(Z, X), (saudaraLaki(Y, Z); saudaraPerempuan(Y, Z)).
-ponakanLaki :- ponakan(X, Y), laki(X).
-ponakanPerempuan :- ponakan(X, Y), perempuan(X).
-
+ponakanLaki(X, Y) :- ponakan(X, Y), laki(X).
+ponakanPerempuan(X, Y) :- ponakan(X, Y), perempuan(X).
 
 %relasi sepupu 
+sepupu(X, Y) :- orangTua(Z, X), orangTua(A, Y), saudara(Z, A), X \= Y.
+sepupuLaki(X, Y) :- sepupu(X, Y), laki(X).
+sepupuPerempuan(X, Y) :- sepupu(X, Y), perempuan(X).
 
-%relasi menantu mertua ipar
+%relasi menantu mertua
+menantu(X, Y) :- (suami(X, Z) ; istri(X, Z)), orangTua(Y, Z).
+mertua(X, Y) :- (suami(Y, Z) ; istri(Y, Z) ), orangTua(X, Z).
 
-%relasi suami istri
-
-%relasi kakek buyut nenek buyut
-
+%relasi ipar
+ipar(X, Y) :- (suami(Y, Z) ; istri(Y, Z)), saudara(X, Z).
 
 %relasi kakek dan nenek
-kakek(X, Y) :- pria(X), anak(Z, X), anak(Y, Z).
-nenek(X, Y) :- wanita(X), anak(Z, X), anak(Y, Z).
+kakek(X, Y) :- laki(X), orangTua(X, Z), orangTua(Z, Y).
+nenek(X, Y) :- perempuan(X), orangTua(X, Z), orangTua(Z, Y).
+
+%Relasi kakek buyut dan nenek buyut
+kakekBuyut(X, Y) :- laki(X), orangTua(X, Z), orangTua(Z, A), orangTua(A, Y).
+nenekBuyut(X, Y) :- perempuan(X), orangTua(X, Z), orangTua(Z, A), orangTua(A, Y).
+
+%Relasi cucu
+cucu(X, Y) :- orangTua(Y, Z), orangTua(Z, X).
+cucuLaki(X, Y) :- cucu(X, Y), laki(X).
+cucuPerempuan(X, Y) :- cucu(X, Y), perempuan(X).
+
+%Relasi cicit
+cicit(X, Y) :- orangTua(Y, Z), orangTua(Z, A), orangTua(A, X).
+cicitLaki(X, Y) :- cicit(X, Y), laki(X).
+cicitPerempuan(X, Y) :- cicit(X, Y), perempuan(X).
+langsung coba ae
+
